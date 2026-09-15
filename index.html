@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Random Student Selector</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Helvetica, sans-serif;
+            background: #6db0f3;
+            min-height: 100vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            width: 90%;
+            max-width: 700px;
+            padding: 30px;
+
+            border-radius: 15px;
+
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        /* Selected student box */
+
+        .selected {
+            margin: 25px 0;
+            padding: 25px;
+
+            background: #eef3ff;
+            border-radius: 10px;
+        }
+
+        .selected h2 {
+            margin-bottom: 10px;
+        }
+
+        #studentName {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        #rollNo {
+            margin-top: 5px;
+            color: #555;
+        }
+
+        /* Buttons */
+
+        button {
+            padding: 12px 25px;
+
+            font-size: 16px;
+
+            border: none;
+            border-radius: 8px;
+
+            background: #2563eb;
+            color: white;
+
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .reset {
+            margin-left: 10px;
+            background: #dc2626;
+        }
+
+        .reset:hover {
+            background: #b91c1c;
+        }
+
+        /* Student list */
+
+        .student-list {
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .student-list h2 {
+            margin-bottom: 10px;
+        }
+
+        .student {
+            display: grid;
+
+            grid-template-columns: 80px 1fr 100px;
+
+            padding: 12px 15px;
+
+            border-bottom: 1px solid #ddd;
+        }
+
+        /* Header */
+
+        .student.header {
+            font-weight: bold;
+            background: #e5e7eb;
+
+            border-radius: 6px 6px 0 0;
+        }
+
+        /* Picked student */
+
+        .student.picked {
+            background: #d1fae5;
+            font-weight: bold;
+        }
+
+        /* Tab */
+        @media (max-width: 1024px) {
+            body {
+                padding: 10px;
+                align-items: flex-start;
+            }
+
+            .container {
+                margin-top: 10px;
+                border-radius: 12px;
+            }
+
+            .selected {
+                margin: 20px 0;
+            }
+
+            button {
+                width: 100%;
+                margin: 5px 0;
+            }
+
+            .reset {
+                margin-left: 0;
+            }
+
+            .student {
+                padding: 10px;
+            }
+        }
+
+        /* Mobile */
+
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+
+            .container {
+                padding: 15px 10px;
+            }
+
+            .selected {
+                padding: 18px 10px;
+            }
+
+            #studentName {
+                font-size: 24px;
+            }
+
+            .student {
+                grid-template-columns: 65px 1fr 120px;
+                font-size: 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Random Student Selector</h1>
+
+
+        <!-- Selected Student -->
+
+        <div class="selected">
+
+            <h2>Selected Student</h2>
+
+            <div id="studentName">
+                Click the button!
+            </div>
+
+            <div id="rollNo"></div>
+
+        </div>
+
+
+        <!-- Buttons -->
+
+        <button onclick="pickStudent()">
+            Pick Random Student
+        </button>
+
+        <button class="reset" onclick="resetSelection()">
+            Reset
+        </button>
+
+
+        <!-- Student List -->
+
+        <div class="student-list">
+
+            <h2>Class List</h2>
+
+            <div id="studentList"></div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        /*
+            Student Array
+        */
+
+        let students = [
+            { rollNo: "2503203100102", name: "SAHIL KUMAR" },
+            { rollNo: "2503203100001", name: "AARAV KARN" },
+            { rollNo: "2503203100087", name: "PAVITRA VERMA" },
+            { rollNo: "2503203100103", name: "SAKSHAM BHARDWAJ" },
+            { rollNo: "2503203100117", name: "PANDEY" },
+            { rollNo: "2503203100137", name: "UTKARSH KUMAR THAKUR" },
+            { rollNo: "2503203100025", name: "ANU PANDEY" },
+            { rollNo: "2503203100080", name: "MUKUL" },
+            { rollNo: "2503203100022", name: "ANSH SRIVASTAVA" },
+            { rollNo: "2503203100057", name: "HARSHIT BHARDWAJ" },
+            { rollNo: "2503203100120", name: "SHUBHAM SINGH" },
+            { rollNo: "2503203100011", name: "AISHWARYA PARASHAR" },
+            { rollNo: "2503203100050", name: "DIVYANSH TRIPATHI" },
+            { rollNo: "2503203100013", name: "AKRITI SINGH" },
+            { rollNo: "2503203100105", name: "SAMARTH VERMA" },
+            { rollNo: "2503203100131", name: "SUYASH RAJPUT" },
+            { rollNo: "2503203100019", name: "ANISH KUMAR" },
+            { rollNo: "2503203100070", name: "MAHI GUPTA" },
+            { rollNo: "2503203100108", name: "SANSKAR GAUR" },
+            { rollNo: "2503203100129", name: "SUDHANSHU JOSHI" },
+            { rollNo: "2503203100020", name: "ANJALI VERMA" },
+            { rollNo: "2503203100086", name: "PARIKSHIT MALIK" },
+            { rollNo: "2503203100140", name: "VANIKA KAPOOR" },
+            { rollNo: "2503203100144", name: "VEDANSH TRIPATHI" },
+            { rollNo: "2503203100032", name: "ARYAN GUPTA" },
+            { rollNo: "2503203100067", name: "LAVANYA SRIVASTAVA" },
+            { rollNo: "2503203100063", name: "ISHIKA JAIN" },
+            { rollNo: "2503203100056", name: "HARDIK LODHI" },
+            { rollNo: "2503203100098", name: "RIDDHI BOSE" },
+            { rollNo: "2503203100012", name: "AJAY KUMAR GIRI" },
+            { rollNo: "2503203100074", name: "MISTHI GUPTA" },
+            { rollNo: "2503203100128", name: "SRISHTI JAISWAL" },
+            { rollNo: "2503203100029", name: "ARCHITA MANI" },
+            { rollNo: "2503203100045", name: "DEVANSH SHUKLA" },
+            { rollNo: "2503203100033", name: "ASHISH SHARMA" },
+            { rollNo: "2503203100051", name: "DROMIL" },
+            { rollNo: "2503203100085", name: "PAKHI DUBEY" },
+            { rollNo: "2503203100047", name: "DIKSHA JHA" },
+            { rollNo: "2503203100147", name: "MADDHESHIYA" },
+            { rollNo: "2503203100104", name: "SAKSHAM VERMA" },
+            { rollNo: "2503203100064", name: "KANISHQ ATTREYA" },
+            { rollNo: "2503203100079", name: "MUKESH GUPTA" },
+            { rollNo: "2503203100004", name: "AARYAN NITIN ZADE" },
+            { rollNo: "2503203100082", name: "NIDHI VERMA" },
+            { rollNo: "2503203100061", name: "HRITTIK RAUSHAN" },
+            { rollNo: "2503203100110", name: "SHIFA SAIFI" },
+            { rollNo: "2503203100125", name: "SIDDHARTH SINGH" },
+            { rollNo: "2503203100014", name: "AKSHAT GARG" },
+            { rollNo: "2503203100113", name: "SHIVAM YADAV" },
+            { rollNo: "2503203100132", name: "SWYAM" },
+            { rollNo: "2503203100088", name: "POORVI PRADHAN" },
+            { rollNo: "2503203100121", name: "SHUBHAM SINGH" },
+            { rollNo: "2503203100084", name: "NITISH KUMAR YADAV" },
+            { rollNo: "2503203100139", name: "VAIBHAV KUMAR" },
+            { rollNo: "2503203100135", name: "TUSHAR BISHT" },
+            { rollNo: "2503203100095", name: "RAJ SINGH" },
+            { rollNo: "2503203100010", name: "AFIF KHAN" },
+            { rollNo: "2503203100030", name: "ARPAN SHARMA" },
+            { rollNo: "2503203100038", name: "BASANT MALIK" },
+            { rollNo: "2503203100042", name: "DARSH JAISWAL [CR] " },
+            { rollNo: "2503203100150", name: "YASHI GUPTA" },
+            { rollNo: "2503203100023", name: "ANSHUL ASWAL" },
+            { rollNo: "2503203100109", name: "SHASHWAT PANDEY" },
+            { rollNo: "2503203100054", name: "GAURAV SINGH" },
+            { rollNo: "2503203100133", name: "TANISHQ ATTREYA" },
+            { rollNo: "2503203100094", name: "PRIYANSHU SHARMA" },
+            { rollNo: "2503203100075", name: "MOHAK GOEL" },
+            { rollNo: "2503203100069", name: "LAVISH BANA" },
+            { rollNo: "2503203100111", name: "SHIVAM KUMAR VERMA" },
+            { rollNo: "2503203100008", name: "ADITYA SARIN" },
+            { rollNo: "2503203100089", name: "PRATIK ABHISHEK" },
+            { rollNo: "2503203100053", name: "EKLAVYA GUPTA" },
+            { rollNo: "2503203100039", name: "BHARAT KUMAR" },
+            { rollNo: "2503203100044", name: "DEEPIKA AGARAWAL" },
+            { rollNo: "2503203100112", name: "SHIVAM SHARMA" },
+            { rollNo: "2503203100114", name: "SHIVANSH GUPTA" },
+            { rollNo: "2503203100018", name: "ANIKET SANGAL" }
+        ];
+
+        /*
+            Students already selected
+        */
+
+        let pickedStudents = [];
+
+        /*
+            Sort students by Roll No.
+        */
+
+        students.sort((a, b) => a.rollNo - b.rollNo);
+
+        /*
+            Display students
+        */
+
+        function displayStudents() {
+
+            const list = document.getElementById("studentList");
+
+            list.innerHTML = "";
+
+
+            // Table header
+
+            const header = document.createElement("div");
+
+            header.classList.add("student", "header");
+
+            header.innerHTML = `
+                <span>Serial No.</span>
+                <span>Name</span>
+                <span>Roll No.</span>
+            `;
+
+            list.appendChild(header);
+
+            /*
+                Display every student
+            */
+
+            students.forEach((student, index) => {
+
+                const div = document.createElement("div");
+
+                div.classList.add("student");
+
+                // Highlight selected students
+
+                if (pickedStudents.includes(student.rollNo)) {
+
+                    div.classList.add("picked");
+
+                }
+
+                div.innerHTML = `
+
+                    <span>${index + 1}</span>
+
+                    <span>${student.name}</span>
+
+                    <span>${student.rollNo}</span>
+
+                `;
+
+                list.appendChild(div);
+
+            });
+
+        }
+
+        /*
+            Pick a random student
+        */
+
+        function pickStudent() {
+
+            /*
+                Check if all students
+                have already been selected.
+            */
+
+            if (pickedStudents.length === students.length) {
+
+                document.getElementById("studentName").textContent =
+                    "Everyone has been picked!";
+
+                document.getElementById("rollNo").textContent =
+                    "Click Reset to start again.";
+
+                return;
+
+            }
+
+            /*
+                Find students who haven't
+                been selected yet.
+            */
+
+            const availableStudents = students.filter(
+
+                student =>
+                    !pickedStudents.includes(student.rollNo)
+
+            );
+
+            /*
+                Generate random index
+            */
+
+            const randomIndex =
+                Math.floor(
+                    Math.random() * availableStudents.length
+                );
+
+            /*
+                Get random student
+            */
+
+            const selectedStudent =
+                availableStudents[randomIndex];
+
+            /*
+                Add student to picked list
+            */
+
+            pickedStudents.push(
+                selectedStudent.rollNo
+            );
+
+            /*
+                Show selected student
+            */
+
+            document.getElementById("studentName").textContent =
+                selectedStudent.name;
+
+            document.getElementById("rollNo").textContent =
+                "Roll No: " + selectedStudent.rollNo;
+
+            /*
+                Update class list
+            */
+
+            displayStudents();
+
+        }
+
+        /*
+            Reset selection
+        */
+
+        function resetSelection() {
+
+            pickedStudents = [];
+
+
+            document.getElementById("studentName").textContent =
+                "Click the button!";
+
+
+            document.getElementById("rollNo").textContent = "";
+
+
+            displayStudents();
+
+        }
+
+        /*
+            Display class list when
+            the page loads.
+        */
+
+        displayStudents();
+
+    </script>
+
+</body>
+
+</html>
