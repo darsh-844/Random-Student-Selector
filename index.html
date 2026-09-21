@@ -16,7 +16,7 @@
 
         body {
             font-family: Helvetica, sans-serif;
-            background: #6db0f3;
+            background: #d071f6;
             min-height: 100vh;
 
             display: flex;
@@ -39,6 +39,28 @@
 
         h1 {
             margin-bottom: 20px;
+        }
+
+        /* Class selector */
+        .class-selector {
+            margin: 0 auto 20px;
+            text-align: left;
+        }
+
+        .class-selector label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        #classSelect {
+            width: 100%;
+            padding: 12px 14px;
+            font-size: 16px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
         }
 
         /* Selected student box */
@@ -195,6 +217,15 @@
         <h1>Random Student Selector</h1>
 
 
+        <!-- Class selector -->
+        <div class="class-selector">
+            <label for="classSelect">Select Class</label>
+            <select id="classSelect" onchange="changeClass()">
+                <option value="ECE-3A">ECE-3A</option>
+                <option value="ECE-3B">ECE-3B</option>
+            </select>
+        </div>
+
         <!-- Selected Student -->
 
         <div class="selected">
@@ -225,7 +256,7 @@
 
         <div class="student-list">
 
-            <h2>Class List</h2>
+            <h2 id="classTitle">ECE-3A - Class List</h2>
 
             <div id="studentList"></div>
 
@@ -237,222 +268,263 @@
     <script>
 
         /*
-            Student Array
+            Student data
         */
 
-        let students = [
-            { rollNo: "2503203100102", name: "SAHIL KUMAR" },
-            { rollNo: "2503203100001", name: "AARAV KARN" },
-            { rollNo: "2503203100087", name: "PAVITRA VERMA" },
-            { rollNo: "2503203100103", name: "SAKSHAM BHARDWAJ" },
-            { rollNo: "2503203100117", name: "PANDEY" },
-            { rollNo: "2503203100137", name: "UTKARSH KUMAR THAKUR" },
-            { rollNo: "2503203100025", name: "ANU PANDEY" },
-            { rollNo: "2503203100080", name: "MUKUL" },
-            { rollNo: "2503203100022", name: "ANSH SRIVASTAVA" },
-            { rollNo: "2503203100057", name: "HARSHIT BHARDWAJ" },
-            { rollNo: "2503203100120", name: "SHUBHAM SINGH" },
-            { rollNo: "2503203100011", name: "AISHWARYA PARASHAR" },
-            { rollNo: "2503203100050", name: "DIVYANSH TRIPATHI" },
-            { rollNo: "2503203100013", name: "AKRITI SINGH" },
-            { rollNo: "2503203100105", name: "SAMARTH VERMA" },
-            { rollNo: "2503203100131", name: "SUYASH RAJPUT" },
-            { rollNo: "2503203100019", name: "ANISH KUMAR" },
-            { rollNo: "2503203100070", name: "MAHI GUPTA" },
-            { rollNo: "2503203100108", name: "SANSKAR GAUR" },
-            { rollNo: "2503203100129", name: "SUDHANSHU JOSHI" },
-            { rollNo: "2503203100020", name: "ANJALI VERMA" },
-            { rollNo: "2503203100086", name: "PARIKSHIT MALIK" },
-            { rollNo: "2503203100140", name: "VANIKA KAPOOR" },
-            { rollNo: "2503203100144", name: "VEDANSH TRIPATHI" },
-            { rollNo: "2503203100032", name: "ARYAN GUPTA" },
-            { rollNo: "2503203100067", name: "LAVANYA SRIVASTAVA" },
-            { rollNo: "2503203100063", name: "ISHIKA JAIN" },
-            { rollNo: "2503203100056", name: "HARDIK LODHI" },
-            { rollNo: "2503203100098", name: "RIDDHI BOSE" },
-            { rollNo: "2503203100012", name: "AJAY KUMAR GIRI" },
-            { rollNo: "2503203100074", name: "MISTHI GUPTA" },
-            { rollNo: "2503203100128", name: "SRISHTI JAISWAL" },
-            { rollNo: "2503203100029", name: "ARCHITA MANI" },
-            { rollNo: "2503203100045", name: "DEVANSH SHUKLA" },
-            { rollNo: "2503203100033", name: "ASHISH SHARMA" },
-            { rollNo: "2503203100051", name: "DROMIL" },
-            { rollNo: "2503203100085", name: "PAKHI DUBEY" },
-            { rollNo: "2503203100047", name: "DIKSHA JHA" },
-            { rollNo: "2503203100147", name: "MADDHESHIYA" },
-            { rollNo: "2503203100104", name: "SAKSHAM VERMA" },
-            { rollNo: "2503203100064", name: "KANISHQ ATTREYA" },
-            { rollNo: "2503203100079", name: "MUKESH GUPTA" },
-            { rollNo: "2503203100004", name: "AARYAN NITIN ZADE" },
-            { rollNo: "2503203100082", name: "NIDHI VERMA" },
-            { rollNo: "2503203100061", name: "HRITTIK RAUSHAN" },
-            { rollNo: "2503203100110", name: "SHIFA SAIFI" },
-            { rollNo: "2503203100125", name: "SIDDHARTH SINGH" },
-            { rollNo: "2503203100014", name: "AKSHAT GARG" },
-            { rollNo: "2503203100113", name: "SHIVAM YADAV" },
-            { rollNo: "2503203100132", name: "SWYAM" },
-            { rollNo: "2503203100088", name: "POORVI PRADHAN" },
-            { rollNo: "2503203100121", name: "SHUBHAM SINGH" },
-            { rollNo: "2503203100084", name: "NITISH KUMAR YADAV" },
-            { rollNo: "2503203100139", name: "VAIBHAV KUMAR" },
-            { rollNo: "2503203100135", name: "TUSHAR BISHT" },
-            { rollNo: "2503203100095", name: "RAJ SINGH" },
-            { rollNo: "2503203100010", name: "AFIF KHAN" },
-            { rollNo: "2503203100030", name: "ARPAN SHARMA" },
-            { rollNo: "2503203100038", name: "BASANT MALIK" },
-            { rollNo: "2503203100042", name: "DARSH JAISWAL [CR] " },
-            { rollNo: "2503203100150", name: "YASHI GUPTA" },
-            { rollNo: "2503203100023", name: "ANSHUL ASWAL" },
-            { rollNo: "2503203100109", name: "SHASHWAT PANDEY" },
-            { rollNo: "2503203100054", name: "GAURAV SINGH" },
-            { rollNo: "2503203100133", name: "TANISHQ ATTREYA" },
-            { rollNo: "2503203100094", name: "PRIYANSHU SHARMA" },
-            { rollNo: "2503203100075", name: "MOHAK GOEL" },
-            { rollNo: "2503203100069", name: "LAVISH BANA" },
-            { rollNo: "2503203100111", name: "SHIVAM KUMAR VERMA" },
-            { rollNo: "2503203100008", name: "ADITYA SARIN" },
-            { rollNo: "2503203100089", name: "PRATIK ABHISHEK" },
-            { rollNo: "2503203100053", name: "EKLAVYA GUPTA" },
-            { rollNo: "2503203100039", name: "BHARAT KUMAR" },
-            { rollNo: "2503203100044", name: "DEEPIKA AGARAWAL" },
-            { rollNo: "2503203100112", name: "SHIVAM SHARMA" },
-            { rollNo: "2503203100114", name: "SHIVANSH GUPTA" },
-            { rollNo: "2503203100018", name: "ANIKET SANGAL" }
-        ];
+        const classData = {
+            "ECE-3A": {
+                students: [
+                    { rollNo: "2503203100102", name: "SAHIL KUMAR" },
+                    { rollNo: "2503203100001", name: "AARAV KARN" },
+                    { rollNo: "2503203100087", name: "PAVITRA VERMA" },
+                    { rollNo: "2503203100103", name: "SAKSHAM BHARDWAJ" },
+                    { rollNo: "2503203100117", name: "PANDEY" },
+                    { rollNo: "2503203100137", name: "UTKARSH KUMAR THAKUR" },
+                    { rollNo: "2503203100025", name: "ANU PANDEY" },
+                    { rollNo: "2503203100080", name: "MUKUL" },
+                    { rollNo: "2503203100022", name: "ANSH SRIVASTAVA" },
+                    { rollNo: "2503203100057", name: "HARSHIT BHARDWAJ" },
+                    { rollNo: "2503203100120", name: "SHUBHAM SINGH" },
+                    { rollNo: "2503203100011", name: "AISHWARYA PARASHAR" },
+                    { rollNo: "2503203100050", name: "DIVYANSH TRIPATHI" },
+                    { rollNo: "2503203100013", name: "AKRITI SINGH" },
+                    { rollNo: "2503203100105", name: "SAMARTH VERMA" },
+                    { rollNo: "2503203100131", name: "SUYASH RAJPUT" },
+                    { rollNo: "2503203100019", name: "ANISH KUMAR" },
+                    { rollNo: "2503203100070", name: "MAHI GUPTA" },
+                    { rollNo: "2503203100108", name: "SANSKAR GAUR" },
+                    { rollNo: "2503203100129", name: "SUDHANSHU JOSHI" },
+                    { rollNo: "2503203100020", name: "ANJALI VERMA" },
+                    { rollNo: "2503203100086", name: "PARIKSHIT MALIK" },
+                    { rollNo: "2503203100140", name: "VANIKA KAPOOR" },
+                    { rollNo: "2503203100144", name: "VEDANSH TRIPATHI" },
+                    { rollNo: "2503203100032", name: "ARYAN GUPTA" },
+                    { rollNo: "2503203100067", name: "LAVANYA SRIVASTAVA" },
+                    { rollNo: "2503203100063", name: "ISHIKA JAIN" },
+                    { rollNo: "2503203100056", name: "HARDIK LODHI" },
+                    { rollNo: "2503203100098", name: "RIDDHI BOSE" },
+                    { rollNo: "2503203100012", name: "AJAY KUMAR GIRI" },
+                    { rollNo: "2503203100074", name: "MISTHI GUPTA" },
+                    { rollNo: "2503203100128", name: "SRISHTI JAISWAL" },
+                    { rollNo: "2503203100029", name: "ARCHITA MANI" },
+                    { rollNo: "2503203100045", name: "DEVANSH SHUKLA" },
+                    { rollNo: "2503203100033", name: "ASHISH SHARMA" },
+                    { rollNo: "2503203100051", name: "DROMIL" },
+                    { rollNo: "2503203100085", name: "PAKHI DUBEY" },
+                    { rollNo: "2503203100047", name: "DIKSHA JHA" },
+                    { rollNo: "2503203100147", name: "MADDHESHIYA" },
+                    { rollNo: "2503203100104", name: "SAKSHAM VERMA" },
+                    { rollNo: "2503203100064", name: "KANISHQ ATTREYA" },
+                    { rollNo: "2503203100079", name: "MUKESH GUPTA" },
+                    { rollNo: "2503203100004", name: "AARYAN NITIN ZADE" },
+                    { rollNo: "2503203100082", name: "NIDHI VERMA" },
+                    { rollNo: "2503203100061", name: "HRITTIK RAUSHAN" },
+                    { rollNo: "2503203100110", name: "SHIFA SAIFI" },
+                    { rollNo: "2503203100125", name: "SIDDHARTH SINGH" },
+                    { rollNo: "2503203100014", name: "AKSHAT GARG" },
+                    { rollNo: "2503203100113", name: "SHIVAM YADAV" },
+                    { rollNo: "2503203100132", name: "SWYAM" },
+                    { rollNo: "2503203100088", name: "POORVI PRADHAN" },
+                    { rollNo: "2503203100121", name: "SHUBHAM SINGH" },
+                    { rollNo: "2503203100084", name: "NITISH KUMAR YADAV" },
+                    { rollNo: "2503203100139", name: "VAIBHAV KUMAR" },
+                    { rollNo: "2503203100135", name: "TUSHAR BISHT" },
+                    { rollNo: "2503203100095", name: "RAJ SINGH" },
+                    { rollNo: "2503203100010", name: "AFIF KHAN" },
+                    { rollNo: "2503203100030", name: "ARPAN SHARMA" },
+                    { rollNo: "2503203100038", name: "BASANT MALIK" },
+                    { rollNo: "2503203100042", name: "DARSH JAISWAL [CR] " },
+                    { rollNo: "2503203100150", name: "YASHI GUPTA" },
+                    { rollNo: "2503203100023", name: "ANSHUL ASWAL" },
+                    { rollNo: "2503203100109", name: "SHASHWAT PANDEY" },
+                    { rollNo: "2503203100054", name: "GAURAV SINGH" },
+                    { rollNo: "2503203100133", name: "TANISHQ ATTREYA" },
+                    { rollNo: "2503203100094", name: "PRIYANSHU SHARMA" },
+                    { rollNo: "2503203100075", name: "MOHAK GOEL" },
+                    { rollNo: "2503203100069", name: "LAVISH BANA" },
+                    { rollNo: "2503203100111", name: "SHIVAM KUMAR VERMA" },
+                    { rollNo: "2503203100008", name: "ADITYA SARIN" },
+                    { rollNo: "2503203100089", name: "PRATIK ABHISHEK" },
+                    { rollNo: "2503203100053", name: "EKLAVYA GUPTA" },
+                    { rollNo: "2503203100039", name: "BHARAT KUMAR" },
+                    { rollNo: "2503203100044", name: "DEEPIKA AGARAWAL" },
+                    { rollNo: "2503203100112", name: "SHIVAM SHARMA" },
+                    { rollNo: "2503203100114", name: "SHIVANSH GUPTA" },
+                    { rollNo: "2503203100018", name: "ANIKET SANGAL" }
+                ]
+            },
 
-        /*
-            Students already selected
-        */
+            "ECE-3B": {
+                students: [
+                    { rollNo: "2503203100077", name: "MOHD IKAN" },
+                    { rollNo: "2503203100138", name: "UTKARSH SINGH" },
+                    { rollNo: "2503203100093", name: "PRIYANSHU KUMAR" },
+                    { rollNo: "2503203100066", name: "KRITIKA SHIVHARE" },
+                    { rollNo: "2400320310021", name: "AMAAN RAZA" },
+                    { rollNo: "2503203100058", name: "HARSHIT MEHTA" },
+                    { rollNo: "2503203100092", name: "PRIYANSHI PANDEY" },
+                    { rollNo: "2503203100136", name: "UNNATI CHAUDHARY" },
+                    { rollNo: "2503203100036", name: "ASHUTOSH PATRO" },
+                    { rollNo: "2503203100026", name: "ANUBHAV TYAGI" },
+                    { rollNo: "2503203100005", name: "AASHUTOSH JOSHI" },
+                    { rollNo: "2503203100007", name: "ABHISHEK GUPTA" },
+                    { rollNo: "2503203100046", name: "DEVESH GUPTA" },
+                    { rollNo: "2503203100055", name: "GAURAV YADAV" },
+                    { rollNo: "2503203100021", name: "ANKIT SINGH"},
+                    { rollNo: "2503203100040", name: "BHOOMI JAISWAL"},
+                    { rollNo: "2503203100081", name: "NEHA"},
+                    { rollNo: "2503203100130", name: "SUJAL TOMAR"},
+                    { rollNo: "2503203100102", name: "SANDEEP SHARMA"},
+                    { rollNo: "2503203100125", name: "SHUBHAM YADAV"},
+                    { rollNo: "2503203100072", name: "MANISH KUMAR YADAV"},
+                    { rollNo: "2503203100006", name: "ABHAY CHAUHAN"},
+                    { rollNo: "2503203100097", name: "RAJDEEP NIRANJAN"},
+                    { rollNo: "2503203100083", name: "NIKHIL KUSHWAHA"},
+                    { rollNo: "2503203100123", name: "SHUBHI SINGH"},
+                    { rollNo: "2503203100090", name: "PRERNA JAIN"},
+                    { rollNo: "2503203100148", name: "YASH PARASHAR"},
+                    { rollNo: "2503203100101", name: "RISHI RANJAN KUMAR"},
+                    { rollNo: "2503203100106", name: "SAMEER SINGH"},
+                    { rollNo: "2503203100145", name: "VEDANT CHAUDHARY"},
+                    { rollNo: "2503203100024", name: "ANSHUL YADAV"},
+                    { rollNo: "2503203100099", name: "RIDHI JAIN"},
+                    { rollNo: "2503203100142", name: "VANSHIKA SHARMA"},
+                    { rollNo: "2503203100016", name: "ANANT DAGAR"},
+                    { rollNo: "2503203100152", name: "YUG GARG"},
+                    { rollNo: "2503203100084", name: "BITU SHARMA"},
+                    { rollNo: "2503203100052", name: "DUSHIENTH RANA"},
+                    { rollNo: "2503203100059", name: "HARSHITA SINGH"},
+                    { rollNo: "2503203100127", name: "SONU KUMAR"},
+                    { rollNo: "2503203100043", name: "DEEPAK SHARMA"},
+                    { rollNo: "2503203100003", name: "AARYAN VERMA"},
+                    { rollNo: "2503203100073", name: "MANYA CHAHAL"},
+                    { rollNo: "2503203100076", name: "MOHD ARQAM"},
+                    { rollNo: "2503203100124", name: "SIDDHARTH CHAUDHARY"},
+                    { rollNo: "2503203100141", name: "VANSH RAJ SINGH"},
+                    { rollNo: "2503203100149", name: "YASHI APANSHI SRIVASTAVA" },
+                    { rollNo: "2503203100035", name: "ASHU KUMAR THAKUR" },
+                    { rollNo: "2503203100091", name: "PRIYANK DEVAL" },
+                    { rollNo: "2503203100037", name: "ASTHA MISHRA" },
+                    { rollNo: "2503203100071", name: "MAHIMA PATEL" },
+                    { rollNo: "2503203100009", name: "ADITYA VARDHAN PANDEY" },
+                    { rollNo: "2503203100028", name: "ANURAG TRIPATHI" },
+                    { rollNo: "2503203100068", name: "LAVI YADAV" },
+                    { rollNo: "2503203100135", name: "SHIVANSH MISHRA" },
+                    { rollNo: "2503203100116", name: "SHREYA KUMARI" },
+                    { rollNo: "2503203100119", name: "SHUBHAM GIRI" },
+                    { rollNo: "2503203100031", name: "ARYAN GUPTA" },
+                    { rollNo: "2503203100017", name: "ANANYA SRIVASTAVA" },
+                    { rollNo: "2503203100062", name: "ISHA KUMARI" },
+                    { rollNo: "2503203100118", name: "SHRI RAM SAINI" },
+                    { rollNo: "2503203100151", name: "YOGESH TIWARI" },
+                    { rollNo: "2503203100126", name: "SOMYA" },
+                    { rollNo: "2503203100034", name: "ASHISH SONI" },
+                    { rollNo: "2503203100143", name: "VANSHIKA CHAUDHARY" },
+                    { rollNo: "2503203100146", name: "VIKRAM MAURYA" },
+                    { rollNo: "2503203100078", name: "MOKSHIT TYAGI" },
+                    { rollNo: "2503203100049", name: "DIVYANSH DIGARI" },
+                    { rollNo: "2503203100134", name: "TANMAY" },
+                    { rollNo: "2503203100002", name: "AARUSHI AGARWAL" },
+                    { rollNo: "2503203100015", name: "AMAN KUMAR" },
+                    { rollNo: "2503203100100", name: "RIMJHIM SHARMA" },
+                    { rollNo: "2503203100065", name: "KHARANSHU GUPTA" },
+                    { rollNo: "2503203100060", name: "HIMANSHU SAW" }
+                ]
+            }
+        };
 
-        let pickedStudents = [];
+        let currentClass = "ECE-3A";
 
-        /*
-            Sort students by Roll No.
-        */
+        const pickedByClass = {
+            "ECE-3A": [],
+            "ECE-3B": []
+        };
 
-        students.sort((a, b) => a.rollNo - b.rollNo);
+        function getStudents() {
+            return classData[currentClass].students;
+        }
 
-        /*
-            Display students
-        */
+        function getPickedStudents() {
+            return pickedByClass[currentClass];
+        }
+
+        function sortStudents() {
+            Object.values(classData).forEach(classInfo => {
+                classInfo.students.sort((a, b) =>
+                    a.rollNo.localeCompare(b.rollNo, undefined, { numeric: true })
+                );
+            });
+        }
+
+        function changeClass() {
+            currentClass = document.getElementById("classSelect").value;
+
+            document.getElementById("studentName").textContent = "Click the button!";
+            document.getElementById("rollNo").textContent = "";
+
+            document.getElementById("classTitle").textContent =
+                currentClass + " - Class List";
+
+            displayStudents();
+        }
 
         function displayStudents() {
-
             const list = document.getElementById("studentList");
+            const students = getStudents();
+            const pickedStudents = getPickedStudents();
 
             list.innerHTML = "";
 
-
-            // Table header
-
             const header = document.createElement("div");
-
             header.classList.add("student", "header");
-
             header.innerHTML = `
                 <span>Serial No.</span>
                 <span>Name</span>
                 <span>Roll No.</span>
             `;
-
             list.appendChild(header);
 
-            /*
-                Display every student
-            */
-
             students.forEach((student, index) => {
-
                 const div = document.createElement("div");
-
                 div.classList.add("student");
 
-                // Highlight selected students
-
                 if (pickedStudents.includes(student.rollNo)) {
-
                     div.classList.add("picked");
-
                 }
 
                 div.innerHTML = `
-
                     <span>${index + 1}</span>
-
                     <span>${student.name}</span>
-
                     <span>${student.rollNo}</span>
-
                 `;
 
                 list.appendChild(div);
-
             });
-
         }
 
-        /*
-            Pick a random student
-        */
-
         function pickStudent() {
-
-            /*
-                Check if all students
-                have already been selected.
-            */
+            const students = getStudents();
+            const pickedStudents = getPickedStudents();
 
             if (pickedStudents.length === students.length) {
-
                 document.getElementById("studentName").textContent =
                     "Everyone has been picked!";
-
                 document.getElementById("rollNo").textContent =
                     "Click Reset to start again.";
-
                 return;
-
             }
 
-            /*
-                Find students who haven't
-                been selected yet.
-            */
-
             const availableStudents = students.filter(
-
-                student =>
-                    !pickedStudents.includes(student.rollNo)
-
+                student => !pickedStudents.includes(student.rollNo)
             );
 
-            /*
-                Generate random index
-            */
-
-            const randomIndex =
-                Math.floor(
-                    Math.random() * availableStudents.length
-                );
-
-            /*
-                Get random student
-            */
-
-            const selectedStudent =
-                availableStudents[randomIndex];
-
-            /*
-                Add student to picked list
-            */
-
-            pickedStudents.push(
-                selectedStudent.rollNo
+            const randomIndex = Math.floor(
+                Math.random() * availableStudents.length
             );
 
-            /*
-                Show selected student
-            */
+            const selectedStudent = availableStudents[randomIndex];
+
+            pickedStudents.push(selectedStudent.rollNo);
 
             document.getElementById("studentName").textContent =
                 selectedStudent.name;
@@ -460,41 +532,22 @@
             document.getElementById("rollNo").textContent =
                 "Roll No: " + selectedStudent.rollNo;
 
-            /*
-                Update class list
-            */
-
             displayStudents();
-
         }
 
-        /*
-            Reset selection
-        */
-
         function resetSelection() {
-
-            pickedStudents = [];
-
+            pickedByClass[currentClass] = [];
 
             document.getElementById("studentName").textContent =
                 "Click the button!";
-
-
             document.getElementById("rollNo").textContent = "";
 
-
             displayStudents();
-
         }
 
-        /*
-            Display class list when
-            the page loads.
-        */
-
+        sortStudents();
+        document.getElementById("classTitle").textContent = currentClass + " - Class List";
         displayStudents();
-
     </script>
 
 </body>
